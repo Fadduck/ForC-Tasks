@@ -1,85 +1,105 @@
 ﻿using System;
 
-public class Employer
+public class MyAccessModifiers
 {
-    internal string name;
-    private DateTime dateofhiring;
+    private int birthYear;
 
-    public Employer(string name, DateTime hiringDate)
+
+    protected string personalInfo;
+
+    internal string IdNumber;
+
+
+    public MyAccessModifiers(int birthYear, string idNumber, string personalInfo)
     {
-        this.name = name;
-        this.dateofhiring = hiringDate;
+        this.birthYear = birthYear;
+        IdNumber = idNumber;
+        this.personalInfo = personalInfo;
     }
 
-    public int yearsofwork()
-    {
-        DateTime today = DateTime.Today;
-        int experienceYears = today.Year - dateofhiring.Year;
 
-       
-        if (dateofhiring > today.AddYears(-experienceYears))
+    public int Age
+    {
+        get
         {
-            experienceYears--;
+            
+            int currentYear = DateTime.Now.Year;
+            return currentYear - birthYear;
+        }
+    }
+
+    
+    private static byte averageMiddleAge = 50;
+
+   
+    public string Name { get; set; }
+
+    
+    public string NickName { get; internal set; }
+
+    
+    protected internal void HasLivedHalfOfLife()
+    {
+       
+    }
+
+  
+    public static bool operator ==(MyAccessModifiers obj1, MyAccessModifiers obj2)
+    {
+      
+        if (ReferenceEquals(obj1, obj2) || obj1 is null || obj2 is null)
+        {
+            return ReferenceEquals(obj1, obj2);
         }
 
-        return experienceYears;
+        
+        return obj1.Name == obj2.Name && obj1.Age == obj2.Age && obj1.personalInfo == obj2.personalInfo;
     }
 
-    public virtual void ShowInfo()
+ 
+    public static bool operator !=(MyAccessModifiers obj1, MyAccessModifiers obj2)
     {
-        int yearsOfExperience = yearsofwork();
-        Console.WriteLine($"{name} has {yearsOfExperience} year(s) of experience");
-    }
-}
-
-public class Devolop : Employer
-{
-    private string programmingLanguage;
-
-    public Devolop(string name, DateTime hiringDate, string programmingLanguage)
-        : base(name, hiringDate)
-    {
-        this.programmingLanguage = programmingLanguage;
+        return !(obj1 == obj2);
     }
 
-    public override void ShowInfo()
+    
+    public override bool Equals(object obj)
     {
-        base.ShowInfo(); 
-        Console.WriteLine($"{name} is a {programmingLanguage} programmer");
-    }
-}
-
-public class QaProgrammer : Employer
-{
-    private bool isAutomation;
-
-    public QaProgrammer(string name, DateTime hiringDate, bool isAutomation)
-        : base(name, hiringDate)
-    {
-        this.isAutomation = isAutomation;
+        if (obj is MyAccessModifiers myObject)
+        {
+            return this == myObject;
+        }
+        return false;
     }
 
-    public override void ShowInfo()
+  
+    public override int GetHashCode()
     {
-        int yearsOfExperience = yearsofwork();
-        string testerType = isAutomation ? "automated" : "manual";
-        Console.WriteLine($"{name} is {testerType} tester and has {yearsOfExperience} year(s) of experience");
+        return base.GetHashCode();
     }
 }
 
 class Program
 {
-    static void Main()
+    static void Main(string[] args)
     {
-        Devolop dev = new Devolop("John Doe", new DateTime(2010, 5, 15), "C#");
-        dev.ShowInfo();
-        Console.WriteLine();
+        
+        MyAccessModifiers person = new MyAccessModifiers(1990, "ID12345", "John Doe");
 
-        QaProgrammer automatedTester = new QaProgrammer("Alice Smith", new DateTime(2015, 8, 20), true);
-        automatedTester.ShowInfo();
-        Console.WriteLine();
+    
+        person.Name = "John";
+        person.NickName = "Johnny";
 
-        QaProgrammer manualTester = new QaProgrammer("Bob Johnson", new DateTime(2013, 10, 10), false);
-        manualTester.ShowInfo();
+     
+        Console.WriteLine($"Name: {person.Name}");
+        Console.WriteLine($"NickName: {person.NickName}");
+        Console.WriteLine($"Age: {person.Age}");
+
+        
+        person.HasLivedHalfOfLife();
+
+        
+        MyAccessModifiers person2 = new MyAccessModifiers(1990, "ID22345", "John Doe");
+        Console.WriteLine($"Are persons equal? {person == person2}");
     }
 }
