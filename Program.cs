@@ -1,105 +1,85 @@
 ﻿using System;
 
-public class MyAccessModifiers
+public class Employer
 {
-    private int birthYear;
+    internal string name;
+    private DateTime dateofhiring;
 
-
-    protected string personalInfo;
-
-    internal string IdNumber;
-
-
-    public MyAccessModifiers(int birthYear, string idNumber, string personalInfo)
+    public Employer(string name, DateTime hiringDate)
     {
-        this.birthYear = birthYear;
-        IdNumber = idNumber;
-        this.personalInfo = personalInfo;
+        this.name = name;
+        this.dateofhiring = hiringDate;
     }
 
-
-    public int Age
+    public int yearsofwork()
     {
-        get
-        {
-            
-            int currentYear = DateTime.Now.Year;
-            return currentYear - birthYear;
-        }
-    }
+        DateTime today = DateTime.Today;
+        int experienceYears = today.Year - dateofhiring.Year;
 
-    
-    private static byte averageMiddleAge = 50;
-
-   
-    public string Name { get; set; }
-
-    
-    public string NickName { get; internal set; }
-
-    
-    protected internal void HasLivedHalfOfLife()
-    {
        
-    }
-
-  
-    public static bool operator ==(MyAccessModifiers obj1, MyAccessModifiers obj2)
-    {
-      
-        if (ReferenceEquals(obj1, obj2) || obj1 is null || obj2 is null)
+        if (dateofhiring > today.AddYears(-experienceYears))
         {
-            return ReferenceEquals(obj1, obj2);
+            experienceYears--;
         }
 
-        
-        return obj1.Name == obj2.Name && obj1.Age == obj2.Age && obj1.personalInfo == obj2.personalInfo;
+        return experienceYears;
     }
 
- 
-    public static bool operator !=(MyAccessModifiers obj1, MyAccessModifiers obj2)
+    public virtual void ShowInfo()
     {
-        return !(obj1 == obj2);
+        int yearsOfExperience = yearsofwork();
+        Console.WriteLine($"{name} has {yearsOfExperience} year(s) of experience");
+    }
+}
+
+public class Devolop : Employer
+{
+    private string programmingLanguage;
+
+    public Devolop(string name, DateTime hiringDate, string programmingLanguage)
+        : base(name, hiringDate)
+    {
+        this.programmingLanguage = programmingLanguage;
     }
 
-    
-    public override bool Equals(object obj)
+    public override void ShowInfo()
     {
-        if (obj is MyAccessModifiers myObject)
-        {
-            return this == myObject;
-        }
-        return false;
+        base.ShowInfo(); 
+        Console.WriteLine($"{name} is a {programmingLanguage} programmer");
+    }
+}
+
+public class QaProgrammer : Employer
+{
+    private bool isAutomation;
+
+    public QaProgrammer(string name, DateTime hiringDate, bool isAutomation)
+        : base(name, hiringDate)
+    {
+        this.isAutomation = isAutomation;
     }
 
-  
-    public override int GetHashCode()
+    public override void ShowInfo()
     {
-        return base.GetHashCode();
+        int yearsOfExperience = yearsofwork();
+        string testerType = isAutomation ? "automated" : "manual";
+        Console.WriteLine($"{name} is {testerType} tester and has {yearsOfExperience} year(s) of experience");
     }
 }
 
 class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
-        
-        MyAccessModifiers person = new MyAccessModifiers(1990, "ID12345", "John Doe");
+        Devolop dev = new Devolop("John Doe", new DateTime(2010, 5, 15), "C#");
+        dev.ShowInfo();
+        Console.WriteLine();
 
-    
-        person.Name = "John";
-        person.NickName = "Johnny";
+        QaProgrammer automatedTester = new QaProgrammer("Alice Smith", new DateTime(2015, 8, 20), true);
+        automatedTester.ShowInfo();
+        Console.WriteLine();
 
-     
-        Console.WriteLine($"Name: {person.Name}");
-        Console.WriteLine($"NickName: {person.NickName}");
-        Console.WriteLine($"Age: {person.Age}");
-
-        
-        person.HasLivedHalfOfLife();
-
-        
-        MyAccessModifiers person2 = new MyAccessModifiers(1990, "ID22345", "John Doe");
-        Console.WriteLine($"Are persons equal? {person == person2}");
+        QaProgrammer manualTester = new QaProgrammer("Bob Johnson", new DateTime(2013, 10, 10), false);
+        manualTester.ShowInfo();
     }
 }
